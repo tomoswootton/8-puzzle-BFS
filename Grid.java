@@ -143,22 +143,6 @@ class Grid {
     return String.valueOf(str);
   }
 
-  //prints string out, used for testing and for outputs.
-  public String toString(){
-    StringBuilder str = new StringBuilder();
-    char[] arr =  this.getState().toCharArray();
-    for( int i = 0; i<arr.length; i++ ){
-      if (arr[i] == '0') {
-        str.append(' ');
-      } else {
-        str.append(arr[i]);
-      }
-      if(i % 3 == 2){
-        str.append('\n');
-      }
-    }
-    return String.valueOf(str);
-  }
 
 //method finds children of Grid object and adds them to queue or ends program if
 //goal state is reached.
@@ -168,21 +152,51 @@ public ArrayList<Grid> getChildren(){
   for (String move: new String[]{"L", "R", "U", "D"}) {
     Grid newGrid = new Grid(this, move);
       //if new grids state is the same as the goal state, end program because solution has been found
-    if (newGrid.state == this.getGoalState()){
-      this.endProgram(newGrid.state);
+
       //checks move is possible and if newGrid is already in the queue because if so
       //it shouldnt be added.
-    }else if (newGrid.valid() && Main.queue.contains(newGrid) == false) {
+    if (newGrid.valid()) {
       grids.add(newGrid);
-      Main.moves.add(move);
     }
-    }
+  }
   return grids;
 }
-//method stops program when goal state is reached
-public void endProgram(String state){
-  System.out.println("state of winner: "+ state);
-  System.exit(0);
 
+
+public void displayPath(){
+  ArrayList<String> solutionMoves = new ArrayList();
+  //add final move to array
+  solutionMoves.add(this.move);
+  Grid currentGrid = this.parent;
+  //for everyparent, add its move to array
+  while (currentGrid.state != Grid.initialState){
+    solutionMoves.add(currentGrid.move);
+    currentGrid = currentGrid.parent;
+  }
+  System.out.println("moves taken: " + solutionMoves);
 }
+
+@Override
+public boolean equals(Object obj) {
+  if (!(obj instanceof Grid)) return false;
+  Grid grid = (Grid) obj;
+  return (grid.getState().equals(this.getState()));
+}
+//prints string out, used for testing and for outputs.
+public String toString(){
+  StringBuilder str = new StringBuilder();
+  char[] arr =  this.getState().toCharArray();
+  for( int i = 0; i<arr.length; i++ ){
+    if (arr[i] == '0') {
+      str.append(' ');
+    } else {
+      str.append(arr[i]);
+    }
+    if(i % 3 == 2){
+      str.append('\n');
+    }
+  }
+  return String.valueOf(str);
+}
+
 }

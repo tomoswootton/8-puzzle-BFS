@@ -8,49 +8,58 @@ public class Main {
 // create scanner for inputs
 static Scanner userInput = new Scanner(System.in);
 
-public static ArrayList queue = new ArrayList();
-public static ArrayList moves = new ArrayList();
+public static ArrayList<Grid> known_grids = new ArrayList<Grid>();
+public static ArrayList<Grid> todo_grids = new ArrayList<Grid>();
+
 
   public static void main(String[] args){
     //inputs initial board and goal board states
     //String initialState = Main.inputBoard("enter initial");
     //String goalState = Main.inputBoard("enter goal");
     //Grid.setInitialState(initialState);
-    Grid.setInitialState("123405678");
+    Grid.setInitialState("152046873");
     //Grid.setGoalState(goalState);
-    Grid.setGoalState("123450678");
+    Grid.setGoalState("123456780");
 
 
     //for initial board state
-    //add each initail move to queue
-    for (String move: new String[]{"L", "R", "U", "D"}){
-      //create grid of each move
-      Grid grid = new Grid(new Grid(), move);
-      //add each grid to queue
-      queue.add(grid);
-    }
-    //with the first 4 moves added, run through queue finding children of each
-    //item and check if each item is equal to the goal state
+    //add each initial move to queue
+    known_grids.add(new Grid());
+    todo_grids.add(new Grid());
+
     Main.runThroughQueue();
 
   }
 
+  //TODO: REDO COMMENTS
   public static void runThroughQueue(){
     //loop until i is the length of the queue, which will only happen if no solution is found
-    int i = 0;
-    while (i < queue.size()) {
-      //grab first item in queue array
-      Grid currentGrid = queue.get(0);
+    while (todo_grids.size()>0) {
+      //grab first item in queue array and set it as parent for
+      Grid currentGrid = todo_grids.get(0);
+      //remove item from queue
+      todo_grids.remove(0);
+
+      System.out.println(known_grids.size());
+      System.out.println(todo_grids.size());
+      System.out.println(currentGrid);
+
       //apply getChidlren method to item, this method will stop the program if
       //one of the children is equal to goal state
-      currentGrid.getChildren();
-      i++;
-    }
-    System.out.println("queue" + queue);
-    System.out.println("no solution found");
-    System.exit(0);
-  }
+      if (currentGrid.getState().equals(Grid.getGoalState())){
+        Main.endProgram(currentGrid);
+      }
 
+      ArrayList<Grid> children = currentGrid.getChildren();
+      for(Grid child: children){
+        if(!known_grids.contains(child)){
+          known_grids.add(child);
+          todo_grids.add(child);
+        }
+      }
+    }
+    System.out.println("no solution found");
+  }
   //inputs code ensures inputs are not null and of length 9
   private static String inputBoard(String msg){
     String inp = null;
@@ -62,6 +71,11 @@ public static ArrayList moves = new ArrayList();
     } while(inp.length() != 9);
     return inp;
   }
+
+  //method stops program when goal state is reached
+  public static void endProgram(Grid grid){
+    System.out.println("state of winner: "+ grid.getState());
+    grid.displayPath();
+    System.exit(0);
+  }
 }
-//line 47, want ot put getChildren method on value of i in queue
-//whats tosTring for
