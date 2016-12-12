@@ -1,10 +1,13 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 class Grid {
 
+  //variables to hold intial state and goal state
   private static String initialState;
   private static String goalState;
 
+  //variables hold move taken to get to object, its state and its parents state
   public String move;
   private String state;
   private Grid parent;
@@ -23,6 +26,7 @@ class Grid {
     this.state = parent.getState();
   }
 
+  //getters and setters
   public static String getInitialState(){
     return Grid.initialState;
   }
@@ -51,6 +55,7 @@ class Grid {
   public String getMovedState() {
     return this.applyMove();
   }
+
 
   //check possible move is available. eg if move is L, no possible move if the
   //empty("0") index is 0, 3 or 6 becasue they are the left side of the grid
@@ -92,7 +97,6 @@ class Grid {
   //method returns board with 0 piece moved 1 place right;
   public String findRMove(){
     int emptyIndex = this.findEmptySpace();
-    //dont apply left move if index 2, 5 or 8 because no possible move is available
     if (this.valid() == false) {
       return null;
     } else {
@@ -104,7 +108,6 @@ class Grid {
   //method returns board with 0 piece moved 1 place up;
   public String findUMove(){
     int emptyIndex = this.findEmptySpace();
-    //dont apply left move if index 0, 1 or 2 because no possible move is available
     if (this.valid() == false) {
       return null;
     } else {
@@ -116,7 +119,6 @@ class Grid {
   //method returns board with 0 piece moved 1 place down;
   public String findDMove(){
     int emptyIndex = this.findEmptySpace();
-    //dont apply left move if index 6, 7 or 8 because no possible move is available
     if (this.valid() == false) {
       return null;
     } else {
@@ -151,10 +153,7 @@ public ArrayList<Grid> getChildren(){
   ArrayList<Grid> grids = new ArrayList<Grid>();
   for (String move: new String[]{"L", "R", "U", "D"}) {
     Grid newGrid = new Grid(this, move);
-      //if new grids state is the same as the goal state, end program because solution has been found
-
-      //checks move is possible and if newGrid is already in the queue because if so
-      //it shouldnt be added.
+    //add grid to array if the move is valid
     if (newGrid.valid()) {
       grids.add(newGrid);
     }
@@ -162,17 +161,24 @@ public ArrayList<Grid> getChildren(){
   return grids;
 }
 
-
+//method finds the moves taken to achieve the goal state
 public void displayPath(){
+  //create new arraylist to store each move taken to reach goal
   ArrayList<String> solutionMoves = new ArrayList();
-  //add final move to array
-  solutionMoves.add(this.move);
   Grid currentGrid = this.parent;
-  //for everyparent, add its move to array
+  //for every parent, add its move to array
   while (currentGrid.state != Grid.initialState){
     solutionMoves.add(currentGrid.move);
     currentGrid = currentGrid.parent;
+    System.out.println(currentGrid.state);
   }
+  //reverse array so correct order is given
+  System.out.println("before "+ solutionMoves);
+  Collections.reverse(solutionMoves);
+
+  System.out.println("before "+ solutionMoves);
+  //add final move
+  solutionMoves.add(this.move);
   System.out.println("moves taken: " + solutionMoves);
 }
 
